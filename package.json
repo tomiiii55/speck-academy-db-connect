@@ -1,0 +1,18 @@
+{
+  "name": "speck-academy-db-connect",
+  "version": "1.0.0",
+  "description": "speck-academy-db-connect",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
