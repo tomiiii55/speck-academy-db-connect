@@ -1,82 +1,65 @@
 const db = require('../../db/connect');
 
-const getHalls = (request, response) => {
-    db.query('SELECT * FROM halls ORDER BY id ASC', (error, results) => {
-        if (error) {
-            throw error;
+const getHalls = (req, res, next) => {
+    db.query('SELECT * from halls', (err, result) => {
+        if (err) {
+            return next(err);
         }
-        console.log(results.rows);
-        response.status(200).json(results.rows);
+        res.send(result.rows)
     });
-};
+}
 
-const getHallById = (request, response) => {
-    const id = parseInt(request.params.id);
-
-    db.query('SELECT * FROM halls WHERE id = $1', [id], (error, results) => {
-        if (error) {
-            throw error;
+const getHallByid = (req, res, next) => {
+    const hallId = req.params.hallId;
+    db.query('SELECT * from halls where hall_id = $1', [hallId], (err, result) => {
+        if (err) {
+            return next(err);
         }
-        if (results.rows.length > 0) {
-            response.status(200).json(results.rows[0]);
-        } else {
-            response.status(200).send({
-                message: "Hall with that ID doesn't exist."
-            });
-        }
+        res.send(result.rows)
     });
-};
+}
 
-const createHall = (request, response) => {
-    const {
-        name,
-        address
-    } = request.body;
+const createHall = (req, res, next) => {
+        const { hall_id, hall_name, hall_adress, size } = req.body;
+ db.query('INSERT INTO halls (hall_id, hall_name, hall_adress, size) VALUES ($1, $2, $3, $4)', 
+    [hall_id, hall_name, hall_adress, size], (err, result) => {
+      if (err) {
+        return next(err);
+      }
+      res.status(201).send(result.rows)
+    })
+  }
 
-    db.query('INSERT INTO halls (name, address) VALUES ($1, $2)', [name, address], (error, results) => {
-        if (error) {
-            throw error;
+const updateHall = (req, res, next) => {
+    const idHall = req.params.idHall;
+    const { hall_name, hall_adress, size } = req.body
+   db.query(
+      'UPDATE halls SET hall_name = $1, hall_adress = $2, size = $3 WHERE hall_id = $4',
+      [hall_name, hall_adress, size, idHall],
+      (err, results) => {
+        if (err) {
+          throw err;
         }
-        response.status(201).send({
-            message: 'Hall added'
-        });
+        res.status(200).send(results.rows)
+      });
+  }
+
+  const deleteHall = (req, res, next) => {
+    console.log("bla,", req.params);
+    const idHall2 = req.params.idHall2;
+    db.query('DELETE FROM halls WHERE hall_id = $1', [idHall2], (err, results) => {
+      if (err) {
+        throw err;
+      }
+      res.status(200).send(results.rows)
     });
-};
+  }
 
-const updateHall = (request, response) => {
-    const id = parseInt(request.params.id);
-    const {
-        name,
-        address
-    } = request.body;
-    const updatedAt = new Date();
 
-    db.query(
-        'UPDATE halls SET name = $1, address = $2, updatedAt = $3 WHERE id = $4',
-        [name, address, updatedAt, id],
-        (error, results) => {
-            if (error) {
-                throw error;
-            }
-            response.status(200).send(`Hall modified with ID: ${id}`);
-        }
-    );
-};
-
-const deleteHall = (request, response) => {
-    const id = parseInt(request.params.id);
-
-    db.query('DELETE FROM halls WHERE id = $1', [id], (error, results) => {
-        if (error) {
-            throw error;
-        }
-        response.status(200).send(`Hall deleted with ID: ${id}`);
-    });
-};
 module.exports = {
     getHalls,
-    getHallById,
+    getHallByid,
     createHall,
     updateHall,
     deleteHall
-}; 
+};

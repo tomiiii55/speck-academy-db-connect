@@ -1,3 +1,9 @@
+    
 const hallsHandler = require('./halls');
-
-module.exports = hallsHandler;
+const usersHandler = require('./users');
+const reservationsHandler = require('./reservations');
+module.exports = {
+    hallsHandler,
+    usersHandler,
+    reservationsHandler
+    };
